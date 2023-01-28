@@ -14,10 +14,7 @@ Flask application for MadCourseEvaluator back end web API.
 - Hosted React Front End: https://madgers.netlify.app/
 - Routes:
     /search
-    /course-info/<cUID>
-    /course-profs/<cUID>
-    /reddit-comments/<cUID>
-    /grade-distribution/<cUID>
+    /course/<cUID>
     /prof-info/<pUID>
     /prof-courses/<pUID>
 - URL Params: 
@@ -101,10 +98,10 @@ def search():
 
     return return_data
 
-@app.route('/course-info/<cUID>', methods=['GET', 'POST'])
-def course_info(cUID):
+@app.route('/course/<cUID>', methods=['GET', 'POST'])
+def course(cUID):
     """
-    Returns all of a single course's information from courses table corresponding to the given cUID.
+    Returns a single course's info, professors who have taught the course, grade distributions, and reddit posts mentioning the course.
 
     Args:
         cUID (str): Course Unique ID
@@ -112,9 +109,12 @@ def course_info(cUID):
     Returns:
         course_json_data (dict): Dictionary of all fields associated with the course corresponding to the given cUID.
     """
+
     conn = engine.raw_connection()
     cursor = conn.cursor()
+    return_data = {}
 
+    # 1. Course Info
     # Get the corresponding course data from courses table:
     cursor.execute("SELECT * FROM courses WHERE cUID = %s",
                    (cUID,))   # Execute SQL query
@@ -136,25 +136,9 @@ def course_info(cUID):
     course_json_data['cDescription'] = course_data[5]
     course_json_data['cReq'] = course_data[6]
 
-    cursor.close()
-    conn.close()
-    return course_json_data
+    return_data['course-info'] = course_json_data
 
-
-@app.route('/course-profs/<cUID>', methods=['GET', 'POST'])
-def course_profs(cUID):
-    """
-    Returns all professors who have taught the a course corresponding to the given cUID. 
-
-    Args:
-        cUID (str): Course Unique ID
-
-    Returns:
-        all_prof_json_data (dict): Dictionary mapping pUID to pData for all professors who have taught the course corresponding to the given cUID.
-    """
-    conn = engine.raw_connection()
-    cursor = conn.cursor()
-
+    # 2. Professors who have taught the course
     q = "SELECT pUID, pData FROM professors WHERE pUID IN (SELECT pUID FROM teaches WHERE cUID = %s)"
     # Get all the professors who have taught the course recently
     cursor.execute(q, (cUID,))
@@ -172,67 +156,9 @@ def course_profs(cUID):
         pData = json.loads(prof[1])
         all_prof_json_data[pUID] = pData
 
-    cursor.close()
-    conn.close()
-    return all_prof_json_data
+    return_data['course-profs'] = all_prof_json_data
 
-
-@app.route('/reddit-comments/<cUID>', methods=['GET', 'POST'])
-def reddit_comments(cUID):
-    """
-    Returns all Reddit comments associated with the course corresponding to the given cUID.
-
-    Args:
-        cUID (str): Course Unique ID
-    
-    Returns:
-        all_rc_json_data (dict): Dictionary mapping rcUID to rcData for all Reddit comments associated with the course corresponding to the given cUID.
-    
-    Notes:
-        - At the moment, the script is restricted to only scrape comments for Statistics, Mathematics, and Computer Science courses.
-            -> This is to reduce the runtime of the script and to avoid paying hosting fees for a larger database.
-    """
-    conn = engine.raw_connection()
-    cursor = conn.cursor()
-
-    # Get all Reddit comments associated with the course
-    cursor.execute("SELECT * FROM rc WHERE cUID = %s", (cUID,))
-
-    if cursor.rowcount == 0:  # If no rows are returned, return an empty dictionary with key 'error'
-        return {'error': 'No professors found for route /reddit-comments/' + cUID + '.'}
-
-    all_rc = cursor.fetchall()  # Fetch all the rows from rc table
-
-    all_rc_json_data = {}  # Create a dictionary mapping rcUID to rcData
-
-    # Populate the all_rc_json_data dictionary with all Reddit comment data
-    for rc in all_rc:
-        comID = rc[0]
-        comBody = rc[1]
-        comLink = rc[2]
-        comVotes = rc[3]
-        all_rc_json_data[comID] = {'comBody': comBody,
-                                   'comLink': comLink, 'comVotes': comVotes}
-
-    cursor.close()
-    conn.close()
-    return all_rc_json_data
-
-
-@app.route('/grade-distribution/<cUID>', methods=['GET', 'POST'])
-def grade_distribution(cUID):
-    """
-    Returns grade distributions for the provided course cUID.
-
-    Args:
-        cUID (str): Course Unique ID
-
-    Returns:
-        grade_distribution (dict): Dictionary containing grade distribution data for the course corresponding to the given cUID.
-    """
-    conn = engine.raw_connection()
-    cursor = conn.cursor()
-
+    # 3. Grade Distributions
     cursor.execute("SELECT cCode FROM courses WHERE cUID = %s", (cUID,))  # Get the course code for the course
     # Fetch the course code and strip the whitespace
     cCode = cursor.fetchall()[0][0]
@@ -295,9 +221,35 @@ def grade_distribution(cUID):
                         if API_prof_name == prof_name.upper():
                             grade_distribution['professor_cumulative_grade_distribution'][prof_pUID][
                                 key] += grade_distribution["courseOfferings"][i]['sections'][j][key]
+    
+    return_data['grade_distribution'] = grade_distribution
+
+    # 4. Reddit comments
+    # Get all Reddit comments associated with the course
+    cursor.execute("SELECT * FROM rc WHERE cUID = %s", (cUID,))
+
+    if cursor.rowcount == 0:  # If no rows are returned, return an empty dictionary with key 'error'
+        return {'error': 'No professors found for route /reddit-comments/' + cUID + '.'}
+
+    all_rc = cursor.fetchall()  # Fetch all the rows from rc table
+
+    all_rc_json_data = {}  # Create a dictionary mapping rcUID to rcData
+
+    # Populate the all_rc_json_data dictionary with all Reddit comment data
+    for rc in all_rc:
+        comID = rc[0]
+        comBody = rc[1]
+        comLink = rc[2]
+        comVotes = rc[3]
+        all_rc_json_data[comID] = {'comBody': comBody,
+                                   'comLink': comLink, 'comVotes': comVotes}
+
+    return_data['reddit_comments'] = all_rc_json_data
+
     cursor.close()
     conn.close()
-    return grade_distribution
+
+    return return_data
 
 
 @app.route('/prof-info/<pUID>', methods=['GET', 'POST'])
