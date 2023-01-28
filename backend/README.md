@@ -29,8 +29,7 @@ The back end is hosted on a AWS EC2 instance with public IP [3.145.22.97](3.145.
 http://3.145.22.97/ + route
 
 route:
-- `/all-courses` - returns all courses records in the database
-- `/all-profs` - returns all professor records in the database'
+- `/search` - returns all course records and professors records
 - `/course-info/<cUID>` - returns a course record with the given course id
 - `/course-profs/<cUID>` - returns all professor records who have taught a given course id
 - `/reddit-comments/<cUID>` - returns all reddit comments for the given course id
