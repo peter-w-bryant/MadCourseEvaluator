@@ -1,0 +1,60 @@
+{
+    "courses": {
+      "83142": {
+        "cCode": " COMP SCI 200",
+        "cCredits": "3 credits",
+        "cDescription": "Learn the process of incrementally developing small (200-500 lines) programs along with the fundamental Computer Science topics. These topics include: problem abstraction and decomposition, the edit-compile-run cycle, using variables of primitive and more complex data types, conditional and loop-based flow control, basic testing and debugging techniques, how to define and call functions (methods), and IO processing techniques. Also teaches and reinforces good programming practices including the use of a consistent style, and meaningful documentation. Intended for students who have no prior programming experience.",
+        "cName": "PROGRAMMING I",
+        "cReq": "Satisfied Quantitative Reasoning (QR) A requirement",
+        "cSubject": "Computer Sciences"
+      },
+      "83145": {
+        "cCode": "COMP SCI/MATH  240",
+        "cCredits": "3 credits",
+        "cDescription": "Basic concepts of logic, sets, partial order and other relations, and functions. Basic concepts of mathematics (definitions, proofs, sets, functions, and relations) with a focus on discrete structures: integers, bits, strings, trees, and graphs.  Propositional logic, Boolean algebra, and predicate logic. Mathematical induction and recursion. Invariants and algorithmic correctness. Recurrences and asymptotic growth analysis. Fundamentals of counting.",
+        "cName": "INTRODUCTION TO DISCRETE MATHEMATICS",
+        "cReq": "MATH217, 221, or 275",
+        "cSubject": "Computer Sciences"
+      },
+      "83148": {
+        "cCode": "COMP SCI 298",
+        "cCredits": "1-3 credits",
+        "cDescription": "Undergraduate directed study in computer sciences.",
+        "cName": "DIRECTED STUDY IN COMPUTER SCIENCE",
+        "cReq": "Consent of instructor",
+        "cSubject": "Computer Sciences"
+      },
+      "83156": {
+        "cCode": "COMP SCI 368",
+        "cCredits": "1 credit",
+        "cDescription": "For students interested in learning a particular programming language. Focuses on a specific language offered at one of three levels: beginner, intermediate, and advanced. Students may repeat the course if the topic title is different.",
+        "cName": "LEARNING A PROGRAMMING LANGUAGE",
+        "cReq": "None",
+        "cSubject": "Computer Sciences"
+      },
+      "83195": {
+        "cCode": "COMP SCI 577",
+        "cCredits": "4 credits",
+        "cDescription": "Basic paradigms for the design and analysis of efficient algorithms: greed, divide-and-conquer, dynamic programming, reductions, and the use of randomness. Computational intractability including typical NP-complete problems and ways to deal with them.",
+        "cName": "INTRODUCTION TO ALGORITHMS",
+        "cReq": "(MATH/COMPSCI240 or STAT/COMPSCI/MATH475) and (COMP SCI 367 or 400), or graduate/professional standing, or declared in the Capstone Certificate in Computer Sciences for Professionals",
+        "cSubject": "Computer Sciences"
+      },
+      "83207": {
+        "cCode": "COMP SCI 681",
+        "cCredits": "3 credits",
+        "cDescription": "Individual study for seniors completing theses for honors in the Computer Sciences major as arranged with a faculty member.",
+        "cName": "SENIOR HONORS THESIS",
+        "cReq": "Consent of instructor",
+        "cSubject": "Computer Sciences"
+      }
+    },
+    "professor_info": {
+      "RMPID": 2316450,
+      "RMPRating": 4.2,
+      "RMPRatingClass": "good",
+      "RMPTotalRatings": 42,
+      "dept": "Computer Science",
+      "name": "Marc Renault"
+    }
+  }
