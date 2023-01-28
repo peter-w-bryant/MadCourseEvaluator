@@ -15,8 +15,7 @@ Flask application for MadCourseEvaluator back end web API.
 - Routes:
     /search
     /course/<cUID>
-    /prof-info/<pUID>
-    /prof-courses/<pUID>
+    /professor/<pUID>
 - URL Params: 
     cUID = Course Unique ID
     pUID = Professor Unique ID
@@ -107,7 +106,7 @@ def course(cUID):
         cUID (str): Course Unique ID
 
     Returns:
-        course_json_data (dict): Dictionary of all fields associated with the course corresponding to the given cUID.
+        return_data (dict): Dictionary of all fields associated with the course corresponding to the given cUID.
     """
 
     conn = engine.raw_connection()
@@ -251,22 +250,21 @@ def course(cUID):
 
     return return_data
 
-
-@app.route('/prof-info/<pUID>', methods=['GET', 'POST'])
-def professor_info(pUID):
+@app.route('/professor/<pUID>', methods=['GET', 'POST'])
+def professor(pUID):
     """
-    Returns all RateMyProfessor data for a professor associated with the given pUID.
-
+    Returns all RateMyProfessors.com data for a given professor and all of the courses they teach.
     Args:
         pUID (str): The pUID of the professor whose data is to be returned.
     
     Returns:
-        professor_data (dict): A dictionary containing all RateMyProfessor data for the professor associated with the given pUID.
-
+        return_data (dict): A dictionary containing all RateMyProfessors data and all of the courses the professor teaches.
     """
     conn = engine.raw_connection()
     cursor = conn.cursor()
+    return_data = {}
 
+    # 1. Professor RateMyProfessors data
     # Get professor data from professors table
     cursor.execute("SELECT pData FROM professors WHERE pUID = %s", (pUID,))
 
@@ -277,25 +275,9 @@ def professor_info(pUID):
     # Store professor data in the full professor data json that will be returned
     professor_data = json.loads(prof_data)
 
-    cursor.close()
-    conn.close()
-    return professor_data
+    return_data['professor_info'] = professor_data
 
-
-@app.route('/prof-courses/<pUID>', methods=['GET', 'POST'])
-def professor_courses(pUID):
-    """
-    Returns all courses (with their data) taught by a professor associated with the given pUID.
-
-    Args:
-        pUID (str): The pUID of the professor whose courses are to be returned.
-
-    Returns:
-        full_course_data_json (dict): A dictionary containing all courses (with their data) taught by the professor associated with the given pUID.
-    """
-    conn = engine.raw_connection()
-    cursor = conn.cursor()
-
+    # 2. Professor's courses
     # Get the course ID data from teaches table
     cursor.execute("SELECT cUID FROM teaches WHERE pUID = %s", (pUID,))
     list_courseID = cursor.fetchall()
@@ -332,10 +314,8 @@ def professor_courses(pUID):
         if unique_course:
             full_course_data_json[courseID] = course_json_data
 
-    cursor.close()
-    conn.close()
-    return full_course_data_json
-
+    return_data['courses'] = full_course_data_json
+    return return_data
 
 if __name__ == '__main__':
     app.run(port=5000)

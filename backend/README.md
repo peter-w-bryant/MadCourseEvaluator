@@ -31,8 +31,7 @@ http://3.145.22.97/ + route
 route:
 - `/search` - returns all course records and professors records
 - `/course/<cUID>` - returns a single course's info, professors who have taught the course, grade distributions, and reddit posts mentioning the course.
-- `/prof-info/<pUID>` - returns a professor record with the given professor id
-- `/prof-courses/<pUID>` - returns all course records taught by a given professor id
+- `/professor/<pUID>` - returns all RateMyProfessors.com data for a given professor and all of the courses they teach.
 
 ## Populating the Database
 
