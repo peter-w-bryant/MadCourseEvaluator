@@ -3,7 +3,7 @@
 __author__ = "Peter Bryant, Jarvis Jia"
 __credits__ = ["Peter Bryant", "Jarvis Jia",
                "Bryan Li", "Swathi Annamaneni", "Aidan Shine, Tong Yang"]
-__version__ = "1.0.0"
+__version__ = "2.0.0"
 __maintainer__ = "Peter Bryant"
 __email__ = "pbryant2@wisc.edu"
 __status__ = "Development"
@@ -13,8 +13,7 @@ Flask application for MadCourseEvaluator back end web API.
 - AWS EC2 Public IP: 3.145.22.97
 - Hosted React Front End: https://madgers.netlify.app/
 - Routes:
-    /all-courses
-    /all-profs
+    /search
     /course-info/<cUID>
     /course-profs/<cUID>
     /reddit-comments/<cUID>
@@ -50,19 +49,20 @@ app.secret_key = config.secret                  # Set Flask Secret Key
 app.config['SQLALCHEMY_DATABASE_URI'] = db_uri  # Set SQLAlchemy URI
 engine = create_engine(db_uri)                  # Create SQLAlchemy Engine
 
-@app.route('/all-courses', methods=['GET', 'POST'])
-def all_courses():
+@app.route('/search', methods=['GET', 'POST'])
+def search():
     """
-    Returns JSON of all courses at the university along with all fields associated with each course.
+    Returns JSON of all courses and all professors at the UW-Madison.
 
     Args:
         None
 
     Returns:
-        all_course_json_data (dict): Dictionary of all courses at the university along with all fields associated with each course.
+        return_data (dict): Dictionary with two keys: 'courses' and 'profs', each with dictionary for each course/professor.
     """
     conn = engine.raw_connection()
     cursor = conn.cursor()
+    return_data = {}
     cursor.execute("SELECT * FROM courses")  # Store all data on all courses
 
     if cursor.rowcount == 0:  # If no rows are returned, return an empty dictionary with key 'error'
@@ -79,24 +79,6 @@ def all_courses():
         course_json_data['cCode'] = course[3]
         all_course_json_data[course_json_data['cUID']] = course_json_data
 
-    cursor.close()
-    conn.close()
-    return all_course_json_data
-
-
-@app.route('/all-profs', methods=['GET', 'POST'])
-def all_profs():
-    """
-    Returns a dictionary of all professors at the university along with all fields associated with each professor.
-
-    Args:
-        None
-
-    Returns:
-        all_profs_json_data (dict): Dictionary of all professors at the university along with all fields associated with each professor.
-    """
-    conn = engine.raw_connection()
-    cursor = conn.cursor()
     cursor.execute("SELECT pUID, pData FROM professors")  # Execute SQL query
 
     if cursor.rowcount == 0:  # If no rows are returned, return an empty dictionary with key 'error'
@@ -113,8 +95,11 @@ def all_profs():
 
     cursor.close()
     conn.close()
-    return all_profs_json_data
 
+    return_data['courses'] = all_course_json_data
+    return_data['profs'] = all_profs_json_data
+
+    return return_data
 
 @app.route('/course-info/<cUID>', methods=['GET', 'POST'])
 def course_info(cUID):
