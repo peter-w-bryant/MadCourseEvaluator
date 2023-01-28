@@ -3,6 +3,9 @@
 # config.py
 /backend/config.py
 
+# env
+/env
+
 # dependencies
 /node_modules
 /.pnp
