@@ -11,7 +11,7 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import { useParams } from "react-router-dom";
 
-import Header from "../helper/Header";
+import Header from "../Global/Header";
 import GPAGraph from "./GPAGraph";
 import Reddit from "./Reddit";
 import ProfessorList from "./ProfessorList";

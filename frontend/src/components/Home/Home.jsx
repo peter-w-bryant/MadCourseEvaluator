@@ -2,7 +2,7 @@ import React from "react";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 
-import Header from "../helper/Header";
+import Header from "../Global/Header";
 import Search from "./Search";
 
 /**
