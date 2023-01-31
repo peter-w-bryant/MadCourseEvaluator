@@ -44,67 +44,58 @@ const Course = () => {
   }, []);
 
   useEffect(() => {
-    // fetch("/course" + courseID).then((response) =>
-    fetch("/course").then((response) =>
-      response.json().then((json) => {
-        // key: course-info
-        setCourseInfo(json["course-info"]);
-
-        // key: grade_distribution
-        const grade_distribution = json["grade_distribution"];
-        if (
-          grade_distribution &&
-          grade_distribution["professor_cumulative_grade_distribution"]
-        )
-          setProfGraphInfo(
-            grade_distribution["professor_cumulative_grade_distribution"]
-          );
-        else setProfGraphInfo({});
-
-        // if the graph is not empty
-        if (
-          grade_distribution &&
-          grade_distribution.cumulative &&
-          !(
-            grade_distribution.cumulative.aCount === 0 &&
-            grade_distribution.cumulative.abCount === 0 &&
-            grade_distribution.cumulative.bCount === 0 &&
-            grade_distribution.cumulative.bcCount === 0 &&
-            grade_distribution.cumulative.cCount === 0 &&
-            grade_distribution.cumulative.dCount === 0 &&
-            grade_distribution.cumulative.fCount === 0
-          )
-        )
-          setGraphInfo([
-            { name: "A", grade: grade_distribution.cumulative.aCount },
-            { name: "AB", grade: grade_distribution.cumulative.abCount },
-            { name: "B", grade: grade_distribution.cumulative.bCount },
-            { name: "BC", grade: grade_distribution.cumulative.bcCount },
-            { name: "C", grade: grade_distribution.cumulative.cCount },
-            { name: "D", grade: grade_distribution.cumulative.dCount },
-            { name: "F", grade: grade_distribution.cumulative.fCount },
-          ]);
-        else setGraphInfo([]);
-
-        // key: reddit_comments
-        const reddit_comments = json["reddit_comments"];
-        var comments = [];
-        // for each comment in the json response, create a new object with the comment body, comment link, and number of votes
-        for (var key in reddit_comments) {
-          const id = key;
-          const body = reddit_comments[key].comBody;
-          const link = reddit_comments[key].comLink;
-          const votes = reddit_comments[key].comVotes;
-
-          comments.push({ id, body, link, votes }); // push the new object to the comments list
-        }
-        comments.sort((a, b) => {
-          // Sorting in descending order based on upvotes
-          return b.votes - a.votes;
-        });
-        setRedditList(comments); // set the RedditList state as the comments array
-      })
-    );
+    // key: course-info
+    setCourseInfo(courseJSON["course-info"]);
+    // key: grade_distribution
+    const grade_distribution = courseJSON["grade_distribution"];
+    if (
+      grade_distribution &&
+      grade_distribution["professor_cumulative_grade_distribution"]
+    )
+      setProfGraphInfo(
+        grade_distribution["professor_cumulative_grade_distribution"]
+      );
+    else setProfGraphInfo({});
+    // if the graph is not empty
+    if (
+      grade_distribution &&
+      grade_distribution.cumulative &&
+      !(
+        grade_distribution.cumulative.aCount === 0 &&
+        grade_distribution.cumulative.abCount === 0 &&
+        grade_distribution.cumulative.bCount === 0 &&
+        grade_distribution.cumulative.bcCount === 0 &&
+        grade_distribution.cumulative.cCount === 0 &&
+        grade_distribution.cumulative.dCount === 0 &&
+        grade_distribution.cumulative.fCount === 0
+      )
+    )
+      setGraphInfo([
+        { name: "A", grade: grade_distribution.cumulative.aCount },
+        { name: "AB", grade: grade_distribution.cumulative.abCount },
+        { name: "B", grade: grade_distribution.cumulative.bCount },
+        { name: "BC", grade: grade_distribution.cumulative.bcCount },
+        { name: "C", grade: grade_distribution.cumulative.cCount },
+        { name: "D", grade: grade_distribution.cumulative.dCount },
+        { name: "F", grade: grade_distribution.cumulative.fCount },
+      ]);
+    else setGraphInfo([]);
+    // key: reddit_comments
+    const reddit_comments = courseJSON["reddit_comments"];
+    var comments = [];
+    // for each comment in the json response, create a new object with the comment body, comment link, and number of votes
+    for (var key in reddit_comments) {
+      const id = key;
+      const body = reddit_comments[key].comBody;
+      const link = reddit_comments[key].comLink;
+      const votes = reddit_comments[key].comVotes;
+      comments.push({ id, body, link, votes }); // push the new object to the comments list
+    }
+    comments.sort((a, b) => {
+      // Sorting in descending order based on upvotes
+      return b.votes - a.votes;
+    });
+    setRedditList(comments); // set the RedditList state as the comments array
   }, [courseJSON]);
 
   useEffect(() => {
@@ -164,7 +155,7 @@ const Course = () => {
       <Container className="grey-box full">
         {
           /* Course Name */
-          courseInfo.cName && (
+          courseInfo && courseInfo.cName && (
             <Row>
               <h3 className="bold-heading-style">{courseInfo.cName}</h3>
             </Row>
@@ -173,7 +164,7 @@ const Course = () => {
 
         {
           /* Course Code */
-          courseInfo.cCode && (
+          courseInfo && courseInfo.cCode && (
             <Row className="heading-style">
               <h3>{courseInfo.cCode}</h3>
             </Row>
@@ -183,7 +174,7 @@ const Course = () => {
         <Row>
           {
             /* Course Subject */
-            courseInfo.cSubject && (
+            courseInfo && courseInfo.cSubject && (
               <Col>
                 <Row>
                   <h5 className="bold-heading-style">Subject</h5>
@@ -197,7 +188,7 @@ const Course = () => {
 
           {
             /* Course Credits */
-            courseInfo.cSubject && (
+            courseInfo && courseInfo.cSubject && (
               <Col>
                 <Row>
                   <h5 className="bold-heading-style">Credits</h5>
@@ -212,7 +203,7 @@ const Course = () => {
 
         {
           /* Course Description */
-          courseInfo.cSubject && (
+          courseInfo && courseInfo.cSubject && (
             <>
               <Row>
                 <h5 className="bold-heading-style">Description</h5>
@@ -226,7 +217,7 @@ const Course = () => {
 
         {
           /* Course Requisites */
-          courseInfo.cReq && (
+          courseInfo && courseInfo.cReq && (
             <Row>
               <h5 className="heading-style">
                 <b>Requisites</b>
