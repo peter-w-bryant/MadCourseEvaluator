@@ -33,141 +33,113 @@ const Course = () => {
   const [professorList, setProfessorList] = useState([]); // useState hook to store the professorList
   const [profGraphInfo, setProfGraphInfo] = useState([]); // useState hook to store the profGraphInfo
 
-  // fetch course info for a particular courseID
   useEffect(() => {
-    fetch("https://3.145.22.97/course-info/" + courseID).then((response) =>
-      response
-        .json()
-        .then((json) => {
-          setCourseInfo(json);
-        })
-        .catch((e) => console.log("error loading courses from backend ", e))
-    );
-  }, [courseID]);
+    // fetch("/course" + courseID).then((response) =>
+    fetch("/course").then((response) =>
+      response.json().then((json) => {
+        // key: course-info
+        setCourseInfo(json["course-info"]);
 
-  // fetch professor graph info for a particular courseInfo, courseID to be used in fetching from /course-profs
-  // fetch overall gpa graph info for a particular courseInfo, courseID
-  // The returned gpa graph distribution for this course is converted into the
-  //    required format for our graph API
-  useEffect(() => {
-    fetch("https://3.145.22.97/grade-distribution/" + courseID)
-      .then((response) => response.json())
-      .then((json) => {
-        // if the response is valid
-        if (json && json["professor_cumulative_grade_distribution"])
-          setProfGraphInfo(json["professor_cumulative_grade_distribution"]);
+        // key: grade_distribution
+        const grade_distribution = json["grade_distribution"];
+        if (
+          grade_distribution &&
+          grade_distribution["professor_cumulative_grade_distribution"]
+        )
+          setProfGraphInfo(
+            grade_distribution["professor_cumulative_grade_distribution"]
+          );
         else setProfGraphInfo({});
 
         // if the graph is not empty
         if (
-          json &&
-          json.cumulative &&
+          grade_distribution &&
+          grade_distribution.cumulative &&
           !(
-            json.cumulative.aCount === 0 &&
-            json.cumulative.abCount === 0 &&
-            json.cumulative.bCount === 0 &&
-            json.cumulative.bcCount === 0 &&
-            json.cumulative.cCount === 0 &&
-            json.cumulative.dCount === 0 &&
-            json.cumulative.fCount === 0
+            grade_distribution.cumulative.aCount === 0 &&
+            grade_distribution.cumulative.abCount === 0 &&
+            grade_distribution.cumulative.bCount === 0 &&
+            grade_distribution.cumulative.bcCount === 0 &&
+            grade_distribution.cumulative.cCount === 0 &&
+            grade_distribution.cumulative.dCount === 0 &&
+            grade_distribution.cumulative.fCount === 0
           )
         )
           setGraphInfo([
-            { name: "A", grade: json.cumulative.aCount },
-            { name: "AB", grade: json.cumulative.abCount },
-            { name: "B", grade: json.cumulative.bCount },
-            { name: "BC", grade: json.cumulative.bcCount },
-            { name: "C", grade: json.cumulative.cCount },
-            { name: "D", grade: json.cumulative.dCount },
-            { name: "F", grade: json.cumulative.fCount },
+            { name: "A", grade: grade_distribution.cumulative.aCount },
+            { name: "AB", grade: grade_distribution.cumulative.abCount },
+            { name: "B", grade: grade_distribution.cumulative.bCount },
+            { name: "BC", grade: grade_distribution.cumulative.bcCount },
+            { name: "C", grade: grade_distribution.cumulative.cCount },
+            { name: "D", grade: grade_distribution.cumulative.dCount },
+            { name: "F", grade: grade_distribution.cumulative.fCount },
           ]);
         else setGraphInfo([]);
+
+        // key: course-profs
+        const course_profs = json["course-profs"];
+        var professors = [];
+        // For professor course in the json response, create a new object with
+        // the professor name, rate my professor rating, department, rate my
+        // professor rating class, and professor ID
+        for (var key in course_profs) {
+          const name = course_profs[key].name;
+          const RMPRating = course_profs[key].RMPRating;
+          const dept = course_profs[key].dept;
+          const RMPRatingClass = course_profs[key].RMPRatingClass;
+          const id = key;
+
+          let graph = {}; // populate professor graph with prof-specific GPA's
+          if (profGraphInfo.hasOwnProperty(id)) {
+            // dependency
+            const temp = profGraphInfo[id];
+            if (
+              // if no prof graph info exists, make an empty graph
+              temp.aCount === 0 &&
+              temp.abCount === 0 &&
+              temp.bCount === 0 &&
+              temp.bcCount === 0 &&
+              temp.cCount === 0 &&
+              temp.dCount === 0 &&
+              temp.fCount === 0
+            )
+              graph = [];
+            // otherwise, set the values of graph to
+            else
+              graph = [
+                { name: "A", grade: temp.aCount ?? 0 },
+                { name: "AB", grade: temp.abCount ?? 0 },
+                { name: "B", grade: temp.bCount ?? 0 },
+                { name: "BC", grade: temp.bcCount ?? 0 },
+                { name: "C", grade: temp.cCount ?? 0 },
+                { name: "D", grade: temp.dCount ?? 0 },
+                { name: "F", grade: temp.fCount ?? 0 },
+              ];
+          }
+          professors.push({ name, RMPRating, dept, RMPRatingClass, id, graph });
+        }
+        setProfessorList(professors); //set the ProfessorList state as the professors array
+
+        // key: reddit_comments
+        const reddit_comments = json["reddit_comments"];
+        var comments = [];
+        // for each comment in the json response, create a new object with the comment body, comment link, and number of votes
+        for (var key in reddit_comments) {
+          const id = key;
+          const body = reddit_comments[key].comBody;
+          const link = reddit_comments[key].comLink;
+          const votes = reddit_comments[key].comVotes;
+
+          comments.push({ id, body, link, votes }); // push the new object to the comments list
+        }
+        comments.sort((a, b) => {
+          // Sorting in descending order based on upvotes
+          return b.votes - a.votes;
+        });
+        setRedditList(comments); // set the RedditList state as the comments array
       })
-      .catch((e) => console.log("error while calling grade-distribution API"));
-  }, [courseInfo, courseID]);
-
-  // fetch professor list and professor GPA info for a particular profGraphInfo, courseID to be used in ProfessorList component
-  useEffect(() => {
-    fetch("https://3.145.22.97/course-profs/" + courseID)
-      .then((response) =>
-        response.json().then((json) => {
-          var professors = [];
-          // For professor course in the json response, create a new object with
-          // the professor name, rate my professor rating, department, rate my
-          // professor rating class, and professor ID
-          for (var key in json) {
-            const name = json[key].name;
-            const RMPRating = json[key].RMPRating;
-            const dept = json[key].dept;
-            const RMPRatingClass = json[key].RMPRatingClass;
-            const id = key;
-
-            let graph = {}; // populate professor graph with prof-specific GPA's
-            if (profGraphInfo.hasOwnProperty(id)) {
-              const temp = profGraphInfo[id];
-              if (
-                // if no prof graph info exists, make an empty graph
-                temp.aCount === 0 &&
-                temp.abCount === 0 &&
-                temp.bCount === 0 &&
-                temp.bcCount === 0 &&
-                temp.cCount === 0 &&
-                temp.dCount === 0 &&
-                temp.fCount === 0
-              )
-                graph = [];
-              // otherwise, set the values of graph to
-              else
-                graph = [
-                  { name: "A", grade: temp.aCount ?? 0 },
-                  { name: "AB", grade: temp.abCount ?? 0 },
-                  { name: "B", grade: temp.bCount ?? 0 },
-                  { name: "BC", grade: temp.bcCount ?? 0 },
-                  { name: "C", grade: temp.cCount ?? 0 },
-                  { name: "D", grade: temp.dCount ?? 0 },
-                  { name: "F", grade: temp.fCount ?? 0 },
-                ];
-            }
-            professors.push({
-              // push the new object to the professors list
-              name,
-              RMPRating,
-              dept,
-              RMPRatingClass,
-              id,
-              graph,
-            });
-          }
-          setProfessorList(professors); //set the ProfessorList state as the professors array
-        })
-      )
-      .catch((e) => console.log("error while calling course-profs API", e));
-  }, [profGraphInfo, courseID]);
-
-  // fetch Reddit comments for a particular courseInfo, courseID to be used in Reddit component, sorting by popularity
-  useEffect(() => {
-    fetch("https://3.145.22.97/reddit-comments/" + courseID)
-      .then((response) =>
-        response.json().then((json) => {
-          var comments = [];
-          // for each comment in the json response, create a new object with the comment body, comment link, and number of votes
-          for (var key in json) {
-            const id = key;
-            const body = json[key].comBody;
-            const link = json[key].comLink;
-            const votes = json[key].comVotes;
-
-            comments.push({ id, body, link, votes }); // push the new object to the comments list
-          }
-          comments.sort((a, b) => {
-            // Sorting in descending order based on upvotes
-            return b.votes - a.votes;
-          });
-          setRedditList(comments); // set the RedditList state as the comments array
-        })
-      )
-      .catch((e) => console.log("error while loading reddit threads ", e));
-  }, [courseInfo, courseID]);
+    );
+  }, []);
 
   return (
     <Container className="full">

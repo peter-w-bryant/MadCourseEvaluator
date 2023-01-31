@@ -45,7 +45,6 @@ const Search = () => {
           classes.push(classFull); // push the new object to the classes list
         }
         setClassList(classes); // set the classList state as the classList array
-        console.log(classes);
 
         const profs = json["profs"];
         var professors = [];
