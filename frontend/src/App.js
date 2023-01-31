@@ -11,9 +11,9 @@ import "react-bootstrap-typeahead/css/Typeahead.css";
 import "react-bootstrap-typeahead/css/Typeahead.bs5.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-import Home from "./components/Home";
-import Course from "./components/Course";
-import Instructor from "./components/Instructor";
+import Home from "./components/Home/Home";
+import Course from "./components/Course/Course";
+import Instructor from "./components/Instructor/Instructor";
 
 /**
  * App: stores the router logic of the web application

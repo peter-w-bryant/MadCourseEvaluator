@@ -26,6 +26,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "flask": "cd ../backend && flask run",
+    "flask-mock": "cd mock_backend && flask run",
     "docs": "jsdoc -c jsdoc.conf.json"
   },
   "eslintConfig": {
@@ -52,5 +53,6 @@
     "eslint": "^8.26.0",
     "eslint-plugin-react": "^7.31.10",
     "prettier": "^2.7.1"
-  }
+  },
+  "proxy": "http://localhost:5000"
 }

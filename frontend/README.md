@@ -40,6 +40,7 @@ Note: The React application is currently pointed to our AWS solution. If you wan
 3. [Search.jsx](src/components/Search.jsx)
 
 ### `yarn cypress open`
+
 Opens the Cypress tesing framework to run component and end to end tests. 
 
 ### `yarn build`
@@ -51,6 +52,10 @@ The build is minified and the filenames include the hashes.\
 Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+
+### `yarn jsdocs`
+
+Generates the documentation located in /jsdocs.
 
 ### `yarn eject`
 
