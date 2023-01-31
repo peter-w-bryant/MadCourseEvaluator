@@ -27,11 +27,21 @@ import ProfessorList from "./ProfessorList";
 const Course = () => {
   const courseID = useParams().id; // get the value of the id param
 
+  const [courseJSON, setCourseJSON] = useState({}); // useState hook to store JSON
   const [courseInfo, setCourseInfo] = useState({}); // useState hook to store the courseInfo
   const [redditList, setRedditList] = useState([]); // useState hook to store the redditList
   const [graphInfo, setGraphInfo] = useState({}); // useState hook to store the graphInfo
   const [professorList, setProfessorList] = useState([]); // useState hook to store the professorList
   const [profGraphInfo, setProfGraphInfo] = useState([]); // useState hook to store the profGraphInfo
+
+  useEffect(() => {
+    // fetch("/course" + courseID).then((response) =>
+    fetch("/course").then((response) =>
+      response.json().then((json) => {
+        setCourseJSON(json);
+      })
+    );
+  }, []);
 
   useEffect(() => {
     // fetch("/course" + courseID).then((response) =>
@@ -76,50 +86,6 @@ const Course = () => {
           ]);
         else setGraphInfo([]);
 
-        // key: course-profs
-        const course_profs = json["course-profs"];
-        var professors = [];
-        // For professor course in the json response, create a new object with
-        // the professor name, rate my professor rating, department, rate my
-        // professor rating class, and professor ID
-        for (var key in course_profs) {
-          const name = course_profs[key].name;
-          const RMPRating = course_profs[key].RMPRating;
-          const dept = course_profs[key].dept;
-          const RMPRatingClass = course_profs[key].RMPRatingClass;
-          const id = key;
-
-          let graph = {}; // populate professor graph with prof-specific GPA's
-          if (profGraphInfo.hasOwnProperty(id)) {
-            // dependency
-            const temp = profGraphInfo[id];
-            if (
-              // if no prof graph info exists, make an empty graph
-              temp.aCount === 0 &&
-              temp.abCount === 0 &&
-              temp.bCount === 0 &&
-              temp.bcCount === 0 &&
-              temp.cCount === 0 &&
-              temp.dCount === 0 &&
-              temp.fCount === 0
-            )
-              graph = [];
-            // otherwise, set the values of graph to
-            else
-              graph = [
-                { name: "A", grade: temp.aCount ?? 0 },
-                { name: "AB", grade: temp.abCount ?? 0 },
-                { name: "B", grade: temp.bCount ?? 0 },
-                { name: "BC", grade: temp.bcCount ?? 0 },
-                { name: "C", grade: temp.cCount ?? 0 },
-                { name: "D", grade: temp.dCount ?? 0 },
-                { name: "F", grade: temp.fCount ?? 0 },
-              ];
-          }
-          professors.push({ name, RMPRating, dept, RMPRatingClass, id, graph });
-        }
-        setProfessorList(professors); //set the ProfessorList state as the professors array
-
         // key: reddit_comments
         const reddit_comments = json["reddit_comments"];
         var comments = [];
@@ -139,7 +105,55 @@ const Course = () => {
         setRedditList(comments); // set the RedditList state as the comments array
       })
     );
-  }, []);
+  }, [courseJSON]);
+
+  useEffect(() => {
+    // key: course-profs
+    const course_profs = courseJSON["course-profs"];
+    var professors = [];
+    // For professor course in the json response, create a new object with
+    // the professor name, rate my professor rating, department, rate my
+    // professor rating class, and professor ID
+    for (var key in course_profs) {
+      const name = course_profs[key].name;
+      const RMPRating = course_profs[key].RMPRating;
+      const dept = course_profs[key].dept;
+      const RMPRatingClass = course_profs[key].RMPRatingClass;
+      const id = key;
+
+      let graph = {}; // populate professor graph with prof-specific GPA's
+      console.log(profGraphInfo);
+      if (profGraphInfo.hasOwnProperty(id)) {
+        // dependency
+        const temp = profGraphInfo[id];
+        console.log(temp);
+        if (
+          // if no prof graph info exists, make an empty graph
+          temp.aCount === 0 &&
+          temp.abCount === 0 &&
+          temp.bCount === 0 &&
+          temp.bcCount === 0 &&
+          temp.cCount === 0 &&
+          temp.dCount === 0 &&
+          temp.fCount === 0
+        )
+          graph = [];
+        // otherwise, set the values of graph to
+        else
+          graph = [
+            { name: "A", grade: temp.aCount ?? 0 },
+            { name: "AB", grade: temp.abCount ?? 0 },
+            { name: "B", grade: temp.bCount ?? 0 },
+            { name: "BC", grade: temp.bcCount ?? 0 },
+            { name: "C", grade: temp.cCount ?? 0 },
+            { name: "D", grade: temp.dCount ?? 0 },
+            { name: "F", grade: temp.fCount ?? 0 },
+          ];
+      }
+      professors.push({ name, RMPRating, dept, RMPRatingClass, id, graph });
+    }
+    setProfessorList(professors); //set the ProfessorList state as the professors array
+  }, [courseJSON, profGraphInfo]);
 
   return (
     <Container className="full">
