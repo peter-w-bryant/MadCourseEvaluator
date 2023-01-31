@@ -9,8 +9,9 @@ import React, { useEffect, useState } from "react";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import Header from "./Header";
 import { useParams } from "react-router-dom";
+
+import Header from "../helper/Header";
 import GPAGraph from "./GPAGraph";
 import Reddit from "./Reddit";
 import ProfessorList from "./ProfessorList";

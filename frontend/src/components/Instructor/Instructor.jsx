@@ -9,7 +9,7 @@ import React, { useEffect, useState } from "react";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import Header from "./Header";
+import Header from "../helper/Header";
 import { useParams, useNavigate } from "react-router-dom";
 
 /**
