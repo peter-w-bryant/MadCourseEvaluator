@@ -113,11 +113,9 @@ const Course = () => {
       const id = key;
 
       let graph = {}; // populate professor graph with prof-specific GPA's
-      console.log(profGraphInfo);
       if (profGraphInfo.hasOwnProperty(id)) {
         // dependency
         const temp = profGraphInfo[id];
-        console.log(temp);
         if (
           // if no prof graph info exists, make an empty graph
           temp.aCount === 0 &&
@@ -153,6 +151,8 @@ const Course = () => {
       </Row>
 
       <Container className="grey-box full">
+        {/* move this section (excluding Reddit) into a seperate component, delete GPAGraph component, clean up overall file  */}
+
         {
           /* Course Name */
           courseInfo && courseInfo.cName && (
@@ -266,12 +266,7 @@ const Course = () => {
               </Row>
             </Col>
           ) : (
-            // if there is no prof info, tell the user
-            <>
-              <h5 className="heading-style">
-                No Intructor Info found for this course
-              </h5>
-            </>
+            <></>
           )}
         </Row>
       </Container>

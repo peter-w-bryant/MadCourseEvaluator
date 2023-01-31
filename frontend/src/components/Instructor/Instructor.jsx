@@ -9,8 +9,9 @@ import React, { useEffect, useState } from "react";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import Header from "../Global/Header";
 import { useParams, useNavigate } from "react-router-dom";
+
+import Header from "../Global/Header";
 
 /**
  * Instructor: component that shows instructor info as well as a list of all
