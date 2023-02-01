@@ -15,6 +15,7 @@ import Header from "../Global/Header";
 import GPAGraph from "./GPAGraph";
 import Reddit from "./Reddit";
 import ProfessorList from "./ProfessorList";
+import CourseInformation from "./CourseInformation";
 
 /**
  * Course: displays Header and all course info: basic course info, cumulative
@@ -151,123 +152,48 @@ const Course = () => {
       </Row>
 
       <Container className="grey-box full">
-        {/* move this section (excluding Reddit) into a seperate component, delete GPAGraph component, clean up overall file  */}
-
-        {
-          /* Course Name */
-          courseInfo && courseInfo.cName && (
-            <Row>
-              <h3 className="bold-heading-style">{courseInfo.cName}</h3>
-            </Row>
-          )
-        }
-
-        {
-          /* Course Code */
-          courseInfo && courseInfo.cCode && (
-            <Row className="heading-style">
-              <h3>{courseInfo.cCode}</h3>
-            </Row>
-          )
-        }
-
+        {/* Course Information */}
         <Row>
-          {
-            /* Course Subject */
-            courseInfo && courseInfo.cSubject && (
-              <Col>
-                <Row>
-                  <h5 className="bold-heading-style">Subject</h5>
-                </Row>
-                <Row>
-                  <h5 className="heading-style">{courseInfo.cSubject}</h5>
-                </Row>
-              </Col>
-            )
-          }
-
-          {
-            /* Course Credits */
-            courseInfo && courseInfo.cSubject && (
-              <Col>
-                <Row>
-                  <h5 className="bold-heading-style">Credits</h5>
-                </Row>
-                <Row>
-                  <h5 className="heading-style">{courseInfo.cCredits}</h5>
-                </Row>
-              </Col>
-            )
-          }
+          <CourseInformation courseInfo={courseInfo} />
         </Row>
 
-        {
-          /* Course Description */
-          courseInfo && courseInfo.cSubject && (
-            <>
-              <Row>
-                <h5 className="bold-heading-style">Description</h5>
-              </Row>
-              <Row>
-                <h5 className="heading-style">{courseInfo.cDescription}</h5>
-              </Row>
-            </>
-          )
-        }
-
-        {
-          /* Course Requisites */
-          courseInfo && courseInfo.cReq && (
-            <Row>
-              <h5 className="heading-style">
-                <b>Requisites</b>
-                {": " + courseInfo.cReq}
-              </h5>
-            </Row>
-          )
-        }
-
-        {/* Cumulative Course GPA Graph and Reddit*/}
         <Row>
-          {graphInfo && // if there is graph data and reddit data, make a row to
-          // hold them
-          graphInfo.length > 0 &&
-          redditList &&
-          redditList.length > 0 ? (
-            <Col>
-              {graphInfo && graphInfo.length > 0 ? ( // if there is graph data, display the graph
-                <div xs={12} lg={6} className="graph-box">
-                  <GPAGraph graphInfo={graphInfo} />
-                </div>
+          <Col>
+            <Row>
+              {" "}
+              <GPAGraph graphInfo={graphInfo} />{" "}
+            </Row>
+            <Row>
+              {redditList && redditList.length > 0 ? (
+                <Col>
+                  {redditList && redditList.length > 0 ? ( // if there is reddit info display reddit comments
+                    <Row xs={12} md={6} className="reddit-box">
+                      {" "}
+                      <Reddit redditList={redditList} />{" "}
+                    </Row>
+                  ) : (
+                    <></>
+                  )}
+                </Col>
               ) : (
                 <></>
               )}
-
-              {redditList && redditList.length > 0 ? ( // if there is reddit info display reddit comments
-                <Row xs={12} md={6} className="reddit-box">
-                  <Reddit redditList={redditList} />
+            </Row>
+          </Col>
+          <Col>
+            {professorList && professorList.length > 0 ? (
+              <Col xs={12} lg={6}>
+                <Row>
+                  <h5 className="bold-heading-style">Instructors</h5>
                 </Row>
-              ) : (
-                <></>
-              )}
-            </Col>
-          ) : (
-            <></>
-          )}
-
-          {/* Professor List and Associating Professor GPA Graph(s) */}
-          {professorList && professorList.length > 0 ? (
-            <Col xs={12} lg={6}>
-              <Row>
-                <h5 className="bold-heading-style">Instructors</h5>
-              </Row>
-              <Row xs={12} lg={6} className="professor-list-container">
-                {<ProfessorList professorList={professorList} />}
-              </Row>
-            </Col>
-          ) : (
-            <></>
-          )}
+                <Row xs={12} lg={6} className="professor-list-container">
+                  {<ProfessorList professorList={professorList} />}
+                </Row>
+              </Col>
+            ) : (
+              <></>
+            )}
+          </Col>
         </Row>
       </Container>
     </Container>
