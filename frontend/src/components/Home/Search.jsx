@@ -79,7 +79,7 @@ const Search = () => {
         pathname: `/instructor/${selected[0].id}`,
       });
     }
-    window.location.reload(true); // Allows page updates
+    // window.location.reload(true); // Allows page updates
   };
 
   return (

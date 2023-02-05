@@ -80,7 +80,7 @@ const Course = () => {
         { name: "D", grade: grade_distribution.cumulative.dCount },
         { name: "F", grade: grade_distribution.cumulative.fCount },
       ]);
-    else setGraphInfo([]);
+    else setGraphInfo([]); //maybe this
     // key: reddit_comments
     const reddit_comments = courseJSON["reddit_comments"];
     var comments = [];
@@ -146,57 +146,64 @@ const Course = () => {
   }, [courseJSON, profGraphInfo]);
 
   return (
-    <Container className="full">
-      <Row>
-        <Header />
-      </Row>
-
-      <Container className="grey-box full">
-        {/* Course Information */}
-        <Row>
-          <CourseInformation courseInfo={courseInfo} />
-        </Row>
-
-        <Row>
-          <Col>
+    <>
+      {courseInfo && courseInfo.hasOwnProperty("cCode") ? (
+        <Container className="full">
+          <Row>
+            <Header />
+          </Row>
+          <Container className="grey-box full">
             <Row>
-              {" "}
-              <GPAGraph graphInfo={graphInfo} />{" "}
+              <CourseInformation courseInfo={courseInfo} />
             </Row>
+
             <Row>
-              {redditList && redditList.length > 0 ? (
-                <Col>
-                  {redditList && redditList.length > 0 ? ( // if there is reddit info display reddit comments
-                    <Row xs={12} md={6} className="reddit-box">
-                      {" "}
-                      <Reddit redditList={redditList} />{" "}
-                    </Row>
+              <Col>
+                {graphInfo && graphInfo.length > 0 ? (
+                  <Row>
+                    <GPAGraph graphInfo={graphInfo} />
+                  </Row>
+                ) : (
+                  <></>
+                )}
+                <Row>
+                  {redditList && redditList.length > 0 ? (
+                    <Col>
+                      {redditList && redditList.length > 0 ? ( // if there is reddit info display reddit comments
+                        <Row xs={12} md={6} className="reddit-box">
+                          {" "}
+                          <Reddit redditList={redditList} />{" "}
+                        </Row>
+                      ) : (
+                        <></>
+                      )}
+                    </Col>
                   ) : (
                     <></>
                   )}
-                </Col>
-              ) : (
-                <></>
-              )}
-            </Row>
-          </Col>
-          <Col>
-            {professorList && professorList.length > 0 ? (
-              <Col xs={12} lg={6}>
-                <Row>
-                  <h5 className="bold-heading-style">Instructors</h5>
-                </Row>
-                <Row xs={12} lg={6} className="professor-list-container">
-                  {<ProfessorList professorList={professorList} />}
                 </Row>
               </Col>
-            ) : (
-              <></>
-            )}
-          </Col>
-        </Row>
-      </Container>
-    </Container>
+              <Col>
+                {professorList && professorList.length > 0 ? (
+                  <Col xs={12} lg={6}>
+                    <Row>
+                      <h5 className="bold-heading-style">Instructors</h5>
+                    </Row>
+                    <Row xs={12} lg={6} className="professor-list-container">
+                      {<ProfessorList professorList={professorList} />}
+                    </Row>
+                  </Col>
+                ) : (
+                  <></>
+                )}
+              </Col>
+            </Row>
+          </Container>
+        </Container>
+      ) : (
+        <div class="loader"></div>
+      )}
+    </>
   );
 };
 

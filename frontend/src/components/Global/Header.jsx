@@ -26,7 +26,7 @@ const Header = () => {
         <LinkContainer to="/">
           {/* Team Logo and Header Text */}
           <Col className="header-start">
-            <img className="header-logo" src="/teamLogo.png" alt="team-logo" />
+            {/* <img className="header-logo" src="/teamLogo.png" alt="team-logo" /> */}
             <h3 className="header-text"> UW </h3>
           </Col>
         </LinkContainer>
