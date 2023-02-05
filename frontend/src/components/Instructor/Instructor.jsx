@@ -9,8 +9,9 @@ import React, { useEffect, useState } from "react";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
-import Header from "./Header";
 import { useParams, useNavigate } from "react-router-dom";
+
+import Header from "../Global/Header";
 
 /**
  * Instructor: component that shows instructor info as well as a list of all
@@ -27,41 +28,28 @@ const Instructor = () => {
   const [courses, setCourses] = useState([]); // useState hook to store the courses
   const [professor, setProfessor] = useState({}); // useState hook to store the professor
 
-  // fetch professor info and professor courses for a particular professorID
   useEffect(() => {
-    // fetch the professor RMP data
-    fetch("https://3.145.22.97/prof-info/" + professorID)
-      .then((response) =>
-        response.json().then((json) => {
-          setProfessor(json);
-        })
-      )
-      .catch((e) =>
-        console.log("error loading professor info from backend ", e)
-      );
+    // fetch("/professor" + professorID).then((response) =>
+    fetch("/professor").then((response) =>
+      response.json().then((json) => {
+        setProfessor(json["professor_info"]);
 
-    // fetch the courses RMP data
-    fetch("https://3.145.22.97/prof-courses/" + professorID).then((response) =>
-      response
-        .json()
-        .then((json) => {
-          var classes = [];
-          // for each course in the json response, create a new object with the course code and the course name
-          for (var key in json) {
-            const classFull = {
-              code: json[key].cCode,
-              name: json[key].cName,
-              id: key,
-            };
-            classes.push(classFull); // push the new object to the classes list
-          }
-          setCourses(classes);
-        })
-        .catch((e) =>
-          console.log("error loading professor courses info from backend ", e)
-        )
+        const prof_courses = json["courses"];
+        var classes = [];
+        // for each course in the json response, create a new object with the course code and the course name
+        for (var key in prof_courses) {
+          console.log(json[key]);
+          const classFull = {
+            code: prof_courses[key].cCode,
+            name: prof_courses[key].cName,
+            id: key,
+          };
+          classes.push(classFull); // push the new object to the classes list
+        }
+        setCourses(classes);
+      })
     );
-  }, [professorID]);
+  }, []);
 
   return (
     <>

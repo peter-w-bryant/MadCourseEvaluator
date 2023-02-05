@@ -28,15 +28,15 @@ const Search = () => {
 
   // fetch class and professor lists
   useEffect(() => {
-    // fetch the course list
-    fetch("https://3.145.22.97/all-courses").then((response) =>
+    fetch("/search").then((response) =>
       response.json().then((json) => {
+        const courses = json["courses"];
         var classes = [];
         // for each course in the json response, create a new object with the course code and the course name
-        for (var key in json) {
-          const code = json[key].cCode;
-          const name = json[key].cName;
-          const id = json[key].cUID;
+        for (var key in courses) {
+          const code = courses[key].cCode;
+          const name = courses[key].cName;
+          const id = courses[key].cUID;
           // concatenate class code and name so that either can be used in search
           const classFull = {
             result: code.concat(" - " + name), // Course code is modified to be displayed in Bootstrap Typeahead
@@ -44,17 +44,13 @@ const Search = () => {
           };
           classes.push(classFull); // push the new object to the classes list
         }
-        setClassList(classes); // set the class state as the classes array
-      })
-    );
+        setClassList(classes); // set the classList state as the classList array
 
-    // fetch the professor list
-    fetch("https://3.145.22.97/all-profs").then((response) =>
-      response.json().then((json) => {
+        const profs = json["profs"];
         var professors = [];
         // for each professor in the json response, create a new object with the professor name
-        for (var key in json) {
-          const name = json[key].name;
+        for (var key in profs) {
+          const name = profs[key].name;
           const id = key;
           const professorFull = {
             result: name,
@@ -83,7 +79,7 @@ const Search = () => {
         pathname: `/instructor/${selected[0].id}`,
       });
     }
-    window.location.reload(true); // Allows page updates
+    // window.location.reload(true); // Allows page updates
   };
 
   return (
