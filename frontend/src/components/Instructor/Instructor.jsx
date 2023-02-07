@@ -29,8 +29,8 @@ const Instructor = () => {
   const [professor, setProfessor] = useState({}); // useState hook to store the professor
 
   useEffect(() => {
-    // fetch("/professor" + professorID).then((response) =>
-    fetch("/professor").then((response) =>
+    fetch("/professor/" + professorID).then((response) =>
+      // fetch("/professor").then((response) =>
       response.json().then((json) => {
         setProfessor(json["professor_info"]);
 

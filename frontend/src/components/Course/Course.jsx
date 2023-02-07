@@ -36,8 +36,8 @@ const Course = () => {
   const [profGraphInfo, setProfGraphInfo] = useState([]); // useState hook to store the profGraphInfo
 
   useEffect(() => {
-    // fetch("/course" + courseID).then((response) =>
-    fetch("/course").then((response) =>
+    fetch("/course/" + courseID).then((response) =>
+      // fetch("/course").then((response) =>
       response.json().then((json) => {
         setCourseJSON(json);
       })
